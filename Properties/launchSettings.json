@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Encryptor": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\test"
+    }
+  }
+}
