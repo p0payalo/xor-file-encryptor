@@ -2,6 +2,10 @@
 - Download or clone repository
 - Compile project with Visual Studio
 
+# Dependency
+- .NET Core 3.1
+- Visual Studio 2017 or higher
+
 # File encryption
 ###### Application parameters
 1. Filepath of directorypath
