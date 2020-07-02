@@ -14,11 +14,32 @@ namespace Encryptor
                 string path = args[0];
                 string target = args[1];
                 string password = args[2];
+                bool ThreadsParameter = false;
+                int threads;
+                if (args.Length == 4)
+                {
+                    bool result = Int32.TryParse(args[3], out threads);
+                    if(!result)
+                    {
+                        Console.WriteLine("Bad threads argument");
+                        Console.ReadLine();
+                        return;
+                    }
+                    if(threads < 1 || threads > 100)
+                    {
+                        Console.WriteLine("Bad threads argument\nMax threads: 100, minimum threads: 1");
+                        Console.ReadLine();
+                        return;
+                    }
+                    ThreadsParameter = true;
+                }
+                else threads = 20;
                 if (target.Equals("-d") || target.Equals("-dir"))
                 {
                     if (Directory.Exists(path))
                     {
-                        EncryptDirectory(path, password);
+                        Encryption encryption = new Encryption(path, password, threads);
+                        encryption.StartEncryption();
                         Console.WriteLine("Encrypt was ended");
                     }
                     else
@@ -26,11 +47,12 @@ namespace Encryptor
                         Console.WriteLine("Directory not exist");
                     }
                 }
-                else if (target.Equals("-f") || target.Equals("-file"))
+                else if ((target.Equals("-f") || target.Equals("-file")) && !ThreadsParameter)
                 {
                     if (File.Exists(path))
                     {
-                        EncryptFile(path, password);
+                        Encryption.EncryptFile(path, password);
+                        Console.WriteLine("Encrypt was ended");
                     }
                     else
                     {
@@ -50,46 +72,6 @@ namespace Encryptor
             finally
             {
                 Console.ReadLine();
-            }
-        }
-
-        static void EncryptDirectory(string path, string pass)
-        {
-            string[] files = Directory.GetFiles(path);
-            List<Task> tasks = new List<Task>();
-            foreach (string file in files)
-            {
-                tasks.Add(Task.Run(new Action(() =>
-                {
-                    EncryptFile(file, pass);
-                })));
-            }
-            Task.WaitAll(tasks.ToArray(), -1); 
-        }
-
-        static void EncryptFile(string filename, string pass)
-        {
-            try
-            {
-                Console.WriteLine("Encrypting/Decrypting " + filename);
-                byte[] data = File.ReadAllBytes(filename);
-                for (int i = 0; i < data.Length; i++)
-                {
-                    data[i] ^= Convert.ToByte(pass[i % pass.Length]);
-                }
-                using (FileStream fs = new FileStream(filename, FileMode.Open))
-                {
-                    fs.Write(data, 0, data.Length);
-                }
-                Console.WriteLine("Encrypting/Decrypting " + filename + " was ended");
-            }
-            catch(UnauthorizedAccessException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            catch(IOException e)
-            {
-                Console.WriteLine(e.Message);
             }
         }
     }
