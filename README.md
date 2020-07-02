@@ -13,7 +13,10 @@
     - `-f or -file` encrypt only 1 file
     - `-d or -dir` encrypt all files in directory
 3. Password
-4. Threads count (Min: 1, Max: 100, Default: 20)
+4. Threads count (Optional, only for directories)
+    - Maximum value: 100
+    - Minumum value: 1
+    - Default value: 20
 
 ##### For example:
 - For file `start Encryptor.exe "D:\Staff\MyFile.png" -f mysuperpass`
